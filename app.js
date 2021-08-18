@@ -8,7 +8,8 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 
 const cors = require('cors');
-const { userRoute, authRoute, adminRoute, subcategoryRoute, courseRoute, categoryRoute, feedbackRoute, registeredCourseRoute, chapterRoute, watchListRoute } = require('./routes');
+const { userRoute, authRoute, adminRoute, subcategoryRoute, courseRoute, categoryRoute, feedbackRoute, registeredCourseRoute, chapterRoute, watchListRoute
+, instructorRoute } = require('./routes');
 
 const app = express();
 dotenv.config();
@@ -40,16 +41,18 @@ mongoose.connection.on('connected', () => {
 });
 
 app.use('/api/categories', categoryRoute);
-app.use('/api/sub-categories', subcategoryRoute);
+app.use('/api/subCategories', subcategoryRoute);
 app.use('/webhook', require('./routes/webhook.route'));
 app.use('/api/courses', courseRoute);
-app.use('/api/users', userRoute);
+app.use('/api/students', userRoute);
 app.use('/api/auth', authRoute);
 app.use('/api/admin', adminRoute);
 app.use('/api/feedback', feedbackRoute);
 app.use('/api/chapter', chapterRoute);
 app.use('/api/watchlist', watchListRoute);
 app.use('/api/registered-course', registeredCourseRoute);
+
+app.use('/api/instructors', instructorRoute);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

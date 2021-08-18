@@ -5,7 +5,7 @@ const auth = async (req, res, next) => {
         const accessToken = req.headers['x-access-token'];
         // console.log(accessToken);
         if (!accessToken) {
-            return res.status(404).json('Invalid authorization! Access token not found');
+            return res.status(401).json('Invalid authorization! Access token not found');
         }
         const verification = await tokenService.verifyToken(accessToken);
         console.log(verification);
@@ -20,7 +20,7 @@ const instructorAuth = async (req, res, next) => {
         const accessToken = req.headers['x-access-token'];
         // console.log(accessToken);
         if (!accessToken) {
-            return res.status(404).json('Invalid authorization! Access token not found');
+            return res.status(401).json('Invalid authorization! Access token not found');
         }
         
         const verification = await tokenService.verifyToken(accessToken);

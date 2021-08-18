@@ -42,7 +42,30 @@ module.exports = {
       subject: 'Activate Online Academy Account',
       text: `Provide following OTP to activate your account: ${otp} \n  If this is not you, ignore this email!`,
     };
-    console.log(envConfigs.nodemailer);
+    return new Promise((resolve) => {
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          resolve({
+            success: false,
+            error,
+          });
+        } else {
+          resolve({
+            success: true,
+            info,
+          });
+        }
+      });
+    });
+  },
+
+  sendMail: (receiverEmail, message) => {
+    const mailOptions = {
+      from: `Online Academy ${email}`,
+      to: `${receiverEmail}`,
+      subject: 'Activate Online Academy Account',
+      text: message,
+    };
     return new Promise((resolve) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {

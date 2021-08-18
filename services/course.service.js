@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { Course, SubCategory, Category, RegisteredCourse } = require('../models');
+const { Course, SubCategory, Category, RegisteredCourse, Feedback } = require('../models');
 
 /**
  * Create a course
@@ -607,7 +607,16 @@ const queryBestSellerCourses = async () => {
  * @returns {Promise<Course>}
 **/
 const getCourseById = async (courseId) => {
-    return Course.findById(mongoose.Types.ObjectId(courseId));
+    return Course.findById(mongoose.Types.ObjectId(courseId)).populate([
+        {
+            path: 'subCategory',
+            select: 'name',
+        },
+        {
+            path: 'instructor',
+            select: 'name',
+        }
+    ]);
 };
 
 /**
@@ -657,6 +666,44 @@ const deleteCourseById = async (courseId) => {
 //     return await Course.paginate(filter, options);
 // }
 
+const getCourses = async (query) => {
+    const courseQuery = await Course.find()
+                        .populate([
+                            {
+                                path: 'subCategory',
+                                select: 'name',
+                            },
+                            {
+                                path: 'instructor',
+                                select: 'name',
+                            }
+                        ])
+                        
+    // if (title.length > 0) {
+    //     courseQuery.find({ $text: { $search: title } });
+    // }
+
+
+
+    // let courses = await courseQuery.lean();
+                               
+    
+    // if (courses) {
+    //     courses = await Promise.all(courses.map(async (course) => {
+    //         course.instructorName = course.instructor.name;
+    //         delete course.instructor;
+
+    //         course.category= course.subCategory.name;
+    //         delete course.subCategory;
+
+    //         const totalRatings = await Feedback.find({ courseId: course._id}).countDocuments();
+    //         course.totalRatings = totalRatings;
+    //         return course;
+    //     }));
+    // }
+    return courseQuery;
+}
+
 module.exports = {
     createCourse,
     queryCourses,
@@ -668,4 +715,6 @@ module.exports = {
     getCourseById,
     updateCourseById,
     deleteCourseById,
+
+    getCourses
 };

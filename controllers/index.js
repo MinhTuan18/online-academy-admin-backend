@@ -8,4 +8,4 @@ module.exports.feedbackController = require('./feedback.controller');
 module.exports.chapterController = require('./chapter.controller');
 module.exports.watchListcontroller = require('./watchlist.controller');
 module.exports.registeredCourseController = require('./registered-course.controller');
-
+module.exports.instructorController = require('./instructor.controller');

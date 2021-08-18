@@ -12,7 +12,7 @@ router
 router
   .route('/:id')
   .get(courseController.getCourse)
-  .patch(auth, courseController.updateCourse)
+  .put(auth, courseController.updateCourse)
   .delete(auth, courseController.deleteCourse);
 
 module.exports = router;

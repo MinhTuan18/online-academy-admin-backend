@@ -1,3 +1,4 @@
+const { Course } = require('../models');
 const { courseService, categoryService} = require('../services');
 const extract = require('../utils/ExtractProperties');
 
@@ -26,47 +27,20 @@ const getCourse = async (req, res) => {
     if (!course) {
         return res.status(404).json({message: 'Course Not Found'});
     }
-    res.status(200).json({ message: 'Found A Course', data: course});
+    res.status(200).json(course);
 }
 
 const getCourses = async (req, res) => {
-    const { type } = req.query;
-    let filter, options, courses;
-    switch (type) {
-        case '1':
-            // console.log('OK');
-            // options = extract(req.query, ['limit', 'page']);
-            // console.log(options);
-            courses = await courseService.queryMostViewCourses();
-            // console.log(courses);
-            break; 
-        case '2':
-            // console.log('OK');
-            // options = extract(req.query, ['limit', 'page']);
-            // console.log(options);
-            courses = await courseService.queryNewestCourses();
-            console.log(courses);
-            break;
-        case '3':
-            // console.log('OK');
-            // options = extract(req.query, ['limit', 'page']);
-            // console.log(options);
-            courses = await courseService.queryBestSellerCourses();
-            console.log(courses);
-            break; 
-        default:
-            // console.log('OK');
-            filter = extract(req.query, ['title', 'category', 'subCategory']);
-            options = extract(req.query, ['sortBy', 'limit', 'page']);
-            courses = await courseService.queryCoursesAdvancedFilter(filter, options);
-            // console.log(courses);
-            break;
-            
+    try {
+        console.log(req.query)
+        const courses = await courseService.getCourses();
+        res.header('Access-Control-Expose-Headers', 'X-Total-Count');
+        res.header('X-Total-Count', courses.length);
+        return res.status(200).json(courses);
+    } catch (error) {
+        res.status(error.statusCode || 500).json(error.message);
     }
-    if (!courses || courses.length === 0) {
-        return res.status(204);
-    }
-    return res.status(200).json(courses);
+    
 }
 
 // const createCourse = async (req, res) => {

@@ -11,6 +11,7 @@ module.exports.feedbackService = require('./feedback.service');
 module.exports.chapterService = require('./chapter.service');
 module.exports.watchListService = require('./watchlist.service');
 module.exports.registeredCourseService = require('./registered-course.service');
+module.exports.instructorService = require('./instructor.service');
 
 
 

@@ -75,7 +75,7 @@ const updateCategoryById = async (catId, updateBody) => {
         new: true,
         omitUndefined: true
     }
-    return await Category.findByIdAndUpdate(mongoose.Types.ObjectId(catId), updateBody, options);
+    return await Category.findByIdAndUpdate(mongoose.Types.ObjectId(catId),{ name: updateBody }, options);
 };
 
 // /**
@@ -135,6 +135,42 @@ const deleteCategoryById = async (catId) => {
     return await Category.findByIdAndDelete(mongoose.Types.ObjectId(catId));
 };
 
+const getAll = async(query) => {
+    let categoryQuery = Category.find();
+
+	if (query) {
+		if (!query.q) {
+			query.q = '.';
+		}
+		categoryQuery.find({$or: [
+            {
+                name: { $regex: query.q, $options: 'i' },
+            },
+            
+        ],
+    })
+			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+			.skip(parseInt(query._start))
+			.limit(10)
+	}
+	const cats = await categoryQuery.exec();
+
+    // let subCategoryQuery = SubCategory.find().populate({ path: 'user', select: 'name'});
+
+	// if (query) {
+	// 	if (!query.q) {
+	// 		query.q = '.';
+	// 	}
+	// 	subCategoryQuery.find({ name: { $regex: query.q, $options: 'i' }})
+	// 		.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+	// 		.skip(parseInt(query._start))
+	// 		.limit(10)
+	// }
+	// let subCats = await subCategoryQuery.exec();
+
+    return cats;
+}
+
 module.exports = {
     createCategory,
     getCategoryById,
@@ -143,4 +179,6 @@ module.exports = {
     updateCategoryById, 
     updateSubCatIntoCategoryById,
     deleteCategoryById,
+
+    getAll
 }

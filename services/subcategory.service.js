@@ -36,7 +36,7 @@ const createSubCategory = async (subCategoryInfo) => {
  * @returns {Promise<SubCategory>}
 **/
 const getSubCategoryById = async (subCatId) => {
-    return await SubCategory.findById(mongoose.Types.ObjectId(subCatId));
+    return await SubCategory.findById(mongoose.Types.ObjectId(subCatId)).populate({path: 'category', select: 'name'});
 };
 
 /**
@@ -189,6 +189,29 @@ const queryMostRegisteredSubCategoryLast7Days = async () => {
     return registeredCourses;
 }
 
+const getAll = async (query) => {
+    let categoryQuery = SubCategory.find().populate({path: 'category', select: 'name'});
+
+	if (query) {
+		if (!query.q) {
+			query.q = '.';
+		}
+		categoryQuery.find({$or: [
+            {
+                name: { $regex: query.q, $options: 'i' },
+            },
+            
+        ],
+    })
+			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+			.skip(parseInt(query._start))
+			.limit(10)
+	}
+	const cats = await categoryQuery.exec();
+
+    return cats;
+}
+
 module.exports = {
     createSubCategory,
     getSubCategoryById,
@@ -197,4 +220,5 @@ module.exports = {
     deleteSubCategoryById,
     querySubCategories,
     queryMostRegisteredSubCategoryLast7Days,
+    getAll
 }

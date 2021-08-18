@@ -40,7 +40,7 @@ module.exports = {
       return res.status(400).json("Category Id is required");
     }
     try {
-      const category = await subcategoryService.getCategoryById(id);
+      const category = await subcategoryService.getSubCategoryById(id);
       if (!category){
         return res.status(204).json();
       }
@@ -99,10 +99,10 @@ module.exports = {
     if (categoryId !== '') filter.category = categoryId;
     if (sortBy !== '') options.sort = {sortBy: 1};
     
-    const subCategories = await subcategoryService.querySubCategories(filter, options);
-    if (subCategories.length === 0) {
-        return res.status(404).json({ message: 'Course Not Found'});
-    }
+    const subCategories = await subcategoryService.getAll(req.query);
+
+    res.header('Access-Control-Expose-Headers', 'X-Total-Count');
+    res.header('X-Total-Count', subCategories.length);
     return res.status(200).json(subCategories);
   }
 

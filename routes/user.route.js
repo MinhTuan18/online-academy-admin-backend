@@ -1,20 +1,18 @@
 const express = require('express');
 const { userController } = require('../controllers');
-const { auth } = require('../middlewares/auth.mdw');
+const { adminAuth } = require('../middlewares/auth.mdw');
 const router = express.Router();
 
-router.post('/activate', userController.activatedAccount);
-// router
-//   .route('/')
-//   .post(userController.createUser);
+router.get('/', adminAuth, userController.getAllUsers);
 
-// router
-//   .route('/:id')
-//   .get(courseController.getCourse)
-//   .patch(courseController.updateCourse)
-//   .delete(courseController.deleteCourse);
+router.post('/', adminAuth, userController.addNewUser);
 
-router.post('/resendOTP', userController.resendOTP);
-router.post('/:userId/update-watchlist', auth, userController.updateWatchlist);
+router.post('/blockUser', adminAuth, userController.blockUser);
+
+router.get('/:id', userController.getUserById);
+
+router.put('/:id', userController.updateProfile);
+
+
 
 module.exports = router;

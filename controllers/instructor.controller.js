@@ -1,10 +1,10 @@
 const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
-const { userService, otpService, nodemailerService, courseService, adminService, authService, tokenService } = require('../services');
+const { userService, otpService, nodemailerService, courseService, adminService, authService, tokenService, instructorService } = require('../services');
 const { isEmailTaken} = require('../services/user.service');
 const getAllUsers = async (req, res) => {
   try {
-    const users = await adminService.getAllUsers(req.query);
+    const users = await instructorService.getAllInstructors(req.query);
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
     res.header('X-Total-Count', users.length);
     res.status(200).json(users);
@@ -19,13 +19,13 @@ const getUserById = async (req, res) => {
     return res.status(400).json("User ID is required!!!");
   }
   try {
-    const user = await adminService.getUserById(id);
+    const user = await instructorService.getInstructorById(id);
     if (!user) {
       return res.status(204).json();
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json(error.message);
+    res.status(error.statusCode || 500).json(error.message);
   }
 };
 
@@ -40,35 +40,17 @@ const addNewUser = async (req, res) => {
       return res.status(400).json(`Email ${user.email} exist!`);
     }
 
-    const newUser = await adminService.addNewUser(user);
+    const newUser = await instructorService.addNewInstructor(user);
 
     //create account success, send mail to user
-    const message = `Dear ${newUser.name},\nYour ${newUser.role} account has been created with password: ${user.password}\nNow you can log in to Online Academy`;
+    const message = `Dear ${newUser.name},\nYour ${newUser.role} account has been created with password: ${newUser.password}\nNow you can log in to Online Academy`;
 
     const mailer = await nodemailerService.sendMail(newUser.email, message);
     
     delete newUser.password;
     res.status(201).json(newUser);
   } catch (error) {
-      res.status(500).json(error.message);
-  }
-};
-
-const blockUser = async (req, res) => {
-  const {id, status} = req.body;
-  if (!id) {
-    return res.status(400).json('User ID is required!');
-  }
-  try {
-    const result = await adminService.blockUser(id, status);
-    if (result) {
-      res.status(200).json();
-    }
-    else {
-      res.status(204).json();
-    }
-  } catch (error) {
-    res.status(500).json(error.message);
+    res.status(error.statusCode || 500).json(error.message);
   }
 };
 
@@ -85,7 +67,7 @@ const updateProfile = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(400).json(error.message);
+    res.status(error.statusCode || 500).json(error.message);
   }
 };
 
@@ -94,6 +76,5 @@ module.exports = {
   getAllUsers,
   getUserById,
   addNewUser,
-  blockUser,
   updateProfile
 }

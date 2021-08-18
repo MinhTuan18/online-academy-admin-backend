@@ -24,10 +24,9 @@ module.exports = {
   createCategory,
 
   getAllCategory: async function (req, res) {
-    const categories = await categoryService.queryAllCategories();
+    const categories = await categoryService.getAll(req.query);
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
     res.header('X-Total-Count', categories.length);
-    console.log(categories.length)
     return res.status(200).json(categories);
   },
   
