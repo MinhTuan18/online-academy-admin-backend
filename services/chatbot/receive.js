@@ -4,7 +4,6 @@ const {deleteDiacritics} = require('../../utils/HandleDiacritics')
 
 function handleReceive(webhook_event) {
     let sender_psid = webhook_event.sender.id;
-    console.log('Sender PSID: ' + sender_psid);
 
     if (webhook_event.message) {
         handleMessage(sender_psid, webhook_event.message);

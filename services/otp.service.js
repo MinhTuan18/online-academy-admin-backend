@@ -24,7 +24,6 @@ const generateOTP = (email) => {
     const otp = Math.floor(100000 + Math.random() * 899999)
     const duration = envConfigs.otp.durationInMinute * 60 * 1000
     const expiresAt = Date.now() + duration
-    console.log(expiresAt);
     const data = `${email}.${otp}.${expiresAt}`
     const dataHash = sha256.hex(data)
     const hash = `${dataHash}.${expiresAt}`

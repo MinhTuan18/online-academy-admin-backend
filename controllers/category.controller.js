@@ -74,7 +74,6 @@ module.exports = {
     const id = req.params.id;
     try {
       const category = await categoryService.deleteCategoryById(id);
-      console.log(category);
       if (!category) {
         return res.status(204).json();
       }

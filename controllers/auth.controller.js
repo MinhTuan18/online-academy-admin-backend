@@ -8,10 +8,8 @@ const register = async (req, res) => {
         // console.log(user);
         //const accessToken = await tokenService.generateAuthTokens(user);
         const { otp, hash } = otpService.generateOTP(user.email);
-        console.log(otp);
         // console.log(hash);
         const result = await nodemailerService.sendOTP(user.email, otp);
-        console.log(result);
         res.status(201).json(
             { 
                 message: 'Successfully Registered! Please activate your account by providing the otp sent to you through your email', 
@@ -76,7 +74,6 @@ const activateAccount =  async (req, res) => {
 const resendOTP = async (req, res) => {
   const { email } = req.body;
   const { otp, hash } = otpService.generateOTP(email);
-  console.log(otp);
   // console.log(hash);
   const sendOTPResult = await nodemailerService.sendOTP(email, otp);
   res.status(200).json({ success: true, message: 'Successfully resent OTP to user email', hash});

@@ -98,7 +98,6 @@ const querySubCategories = async (filter, options) => {
 **/
 const queryMostRegisteredSubCategoryLast7Days = async () => {
     const startingPoint = moment().subtract(7, 'days').toDate().toISOString();
-    console.log(startingPoint);
     const registeredCourses = await RegisteredCourse.aggregate([
         {
             $project: {

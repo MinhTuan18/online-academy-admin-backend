@@ -19,7 +19,6 @@ const updateFeedBack = async (id, updateBody) => {
     new: true,
     omitUndefined: true
   }
-  console.log(updateBody)
   return await Feedback.findByIdAndUpdate({_id: id}, updateBody, options);
 }
 

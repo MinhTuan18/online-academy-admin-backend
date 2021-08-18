@@ -32,8 +32,7 @@ const getCourse = async (req, res) => {
 
 const getCourses = async (req, res) => {
     try {
-        console.log(req.query)
-        const courses = await courseService.getCourses();
+        const courses = await courseService.getCourses(req.query);
         res.header('Access-Control-Expose-Headers', 'X-Total-Count');
         res.header('X-Total-Count', courses.length);
         return res.status(200).json(courses);

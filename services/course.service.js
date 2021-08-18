@@ -148,7 +148,6 @@ const queryCoursesFilterByCategory = async (filter, options) => {
     const querySubcatsCoursesInCategoryResults = await Category.aggregate(querySubcatCoursesInCategory);
     // console.log(querySubcatsCoursesInCategoryResults);
     const { subCatCourseIds } = querySubcatsCoursesInCategoryResults[0];
-    console.log(subCatCourseIds);
     let courseIds = [];
     subCatCourseIds.forEach(subCatCourseId => {
       courseIds = [...courseIds, ...subCatCourseId];
@@ -208,7 +207,6 @@ const queryCoursesFilterByCategory = async (filter, options) => {
     }
   
     const courses = await Course.aggregate(queryFilter);  
-    console.log(courses);
     const totalResults = await Course.find(queryTotalResults).countDocuments();
     return { courses, totalResults };
 };
@@ -334,7 +332,6 @@ const queryCoursesFilterByCategory = async (filter, options) => {
     else {
         // console.log('OK');
         result = await queryCourses({}, { limit, skip, sort });
-        console.log(result);
         const { docs: courses, totalDocs: totalResults, totalPages } = result;    
         return { courses, totalResults, totalPages, limit };
     }
@@ -667,7 +664,7 @@ const deleteCourseById = async (courseId) => {
 // }
 
 const getCourses = async (query) => {
-    const courseQuery = await Course.find()
+    let courseQuery = Course.find()
                         .populate([
                             {
                                 path: 'subCategory',
@@ -678,14 +675,26 @@ const getCourses = async (query) => {
                                 select: 'name',
                             }
                         ])
-                        
-    // if (title.length > 0) {
-    //     courseQuery.find({ $text: { $search: title } });
-    // }
+    if (query) {
+        if (query.instructor) {
+            courseQuery.find({instructor: query.instructor});
+        }
 
+        if (query.subCategory) {
 
+            courseQuery.find({subCategory: query.subCategory});
+        }
 
-    // let courses = await courseQuery.lean();
+        if (query.q) {
+            courseQuery.find({ $text: { $search: query.q } })
+
+        }
+        courseQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+			.skip(parseInt(query._start))
+			.limit(10);
+	}
+
+    let courses = await courseQuery;
                                
     
     // if (courses) {
@@ -701,7 +710,7 @@ const getCourses = async (query) => {
     //         return course;
     //     }));
     // }
-    return courseQuery;
+    return courses;
 }
 
 module.exports = {
