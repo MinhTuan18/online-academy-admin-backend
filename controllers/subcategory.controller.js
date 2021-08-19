@@ -60,7 +60,7 @@ module.exports = {
       return res.status(400).json("Category name is required!");
     }
     try {
-      const category = await subcategoryService.updateCategoryById(id, req.body);
+      const category = await subcategoryService.updateSubCategoryById(id, req.body);
       if (!category){
         return res.status(204).json();
       }
@@ -70,14 +70,14 @@ module.exports = {
       });
     }
     catch (error) {
-      res.status(500).json(err.message);
+      return res.status(error.statusCode || 500).json(error.message);
     }
   },
 
   deleteCategory: async function (req, res) {
     const id = req.params.id;
     try {
-      const category = await subcategoryService.deleteCategoryById(id);
+      const category = await subcategoryService.deleteSubCategoryById(id);
       if (!category) {
         return res.status(204).json();
       }

@@ -36,7 +36,7 @@ const createSubCategory = async (subCategoryInfo) => {
  * @returns {Promise<SubCategory>}
 **/
 const getSubCategoryById = async (subCatId) => {
-    return await SubCategory.findById(mongoose.Types.ObjectId(subCatId)).populate({path: 'category', select: 'name'});
+    return await SubCategory.findById(mongoose.Types.ObjectId(subCatId));
 };
 
 /**
@@ -58,7 +58,28 @@ const updateSubCategoryById = async (subCatId, updateBody) => {
         new: true,
         omitUndefined: true
     }
+    const oldSubCategory = await SubCategory.findById(subCatId);
+    if (oldSubCategory.category != updateBody.category) {
+        //remove sub Cat in old Category
+        let oldCategory = await Category.findById(oldSubCategory.category).lean();
+        console.log(oldCategory.subCategories)
+        
+        const newArr = oldCategory.subCategories.filter(x => x != subCatId);
+        await Category.findByIdAndUpdate(mongoose.Types.ObjectId(oldCategory._id), {subCategories: newArr}, options);
+
+        //update to new Cat
+        await Category.findByIdAndUpdate(
+            mongoose.Types.ObjectId(updateBody.category),
+            { $push: 
+                { 
+                    subCategories: subCatId,
+                } 
+            }, 
+            options
+        );
+    }
     return await SubCategory.findByIdAndUpdate(mongoose.Types.ObjectId(subCatId), updateBody, options);
+    
 };
 
 /**
@@ -71,6 +92,14 @@ const deleteSubCategoryById = async (subCatId) => {
     if (courses && courses.length) {
         throw new ApiError('This sub-category have some courses!', httpStatus.BAD_REQUEST);
     }
+    const options = {
+        new: true,
+        omitUndefined: true
+    }
+    const subCat = await SubCategory.findById(subCatId).populate({path:'category', select:'subCategories'});
+    //remove subcat in cat
+    const newArr = subCat.category.subCategories.filter(x => x != subCatId);
+    await Category.findByIdAndUpdate(mongoose.Types.ObjectId(subCat.category._id), {subCategories: newArr}, options);
     return await SubCategory.findByIdAndDelete(mongoose.Types.ObjectId(subCatId));
 };
 
@@ -189,7 +218,7 @@ const queryMostRegisteredSubCategoryLast7Days = async () => {
 }
 
 const getAll = async (query) => {
-    let categoryQuery = SubCategory.find().populate({path: 'category', select: 'name'});
+    let categoryQuery = SubCategory.find();
 
 	if (query) {
 		if (!query.q) {

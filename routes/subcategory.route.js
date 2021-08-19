@@ -15,7 +15,7 @@ router
 router
   .route('/:id')
   .get(subcategoryController.getCategoryById)
-  .patch(auth, subcategoryController.updateCategory)
+  .put(auth, subcategoryController.updateCategory)
   .delete(auth, subcategoryController.deleteCategory);
 
 
