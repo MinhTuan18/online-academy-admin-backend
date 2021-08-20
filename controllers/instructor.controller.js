@@ -43,7 +43,7 @@ const addNewUser = async (req, res) => {
     const newUser = await instructorService.addNewInstructor(user);
 
     //create account success, send mail to user
-    const message = `Dear ${newUser.name},\nYour ${newUser.role} account has been created with password: ${newUser.password}\nNow you can log in to Online Academy`;
+    const message = `Dear ${newUser.name},\nYour ${newUser.role} account has been created with password: ${user.password}\nNow you can log in to Online Academy`;
 
     const mailer = await nodemailerService.sendMail(newUser.email, message);
     
