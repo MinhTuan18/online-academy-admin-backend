@@ -148,11 +148,16 @@ const getAll = async(query) => {
             },
             
         ],
-    })
-			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+        })
+    
+			
+	}
+
+    const totalResults = await Category.countDocuments(categoryQuery);
+
+    categoryQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
 			.skip(parseInt(query._start))
 			.limit(10)
-	}
 	const cats = await categoryQuery.exec();
 
     // let subCategoryQuery = SubCategory.find().populate({ path: 'user', select: 'name'});
@@ -168,7 +173,7 @@ const getAll = async(query) => {
 	// }
 	// let subCats = await subCategoryQuery.exec();
 
-    return cats;
+    return {result: cats, totalResults};
 }
 
 module.exports = {

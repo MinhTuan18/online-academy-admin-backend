@@ -20,12 +20,16 @@ const getAllUsers = async (query) => {
 				},
 			],
 		})
-			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
-			.skip(parseInt(query._start))
-			.limit(10)
+			
 	}
+	const totalResults = await User.countDocuments(userQuery);
+
+	userQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+	.skip(parseInt(query._start))
+	.limit(10)
 	const users = await userQuery.exec();
-  return users;
+	return {result: users, totalResults};
+
 };
   
 const getUserById = async (id) => {

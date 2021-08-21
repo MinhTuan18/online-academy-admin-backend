@@ -689,10 +689,13 @@ const getCourses = async (query) => {
             courseQuery.find({ $text: { $search: query.q } })
 
         }
-        courseQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+        
+	}
+    const totalResults = await Course.countDocuments(courseQuery);
+
+    courseQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
 			.skip(parseInt(query._start))
 			.limit(10);
-	}
 
     let courses = await courseQuery;
                                
@@ -710,7 +713,8 @@ const getCourses = async (query) => {
     //         return course;
     //     }));
     // }
-    return courses;
+    return {result: courses, totalResults};
+
 }
 
 module.exports = {

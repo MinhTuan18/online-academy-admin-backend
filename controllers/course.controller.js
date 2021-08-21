@@ -32,10 +32,10 @@ const getCourse = async (req, res) => {
 
 const getCourses = async (req, res) => {
     try {
-        const courses = await courseService.getCourses(req.query);
+        const {result, totalResults} = await courseService.getCourses(req.query);
         res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-        res.header('X-Total-Count', courses.length);
-        return res.status(200).json(courses);
+        res.header('X-Total-Count', totalResults);
+        return res.status(200).json(result);
     } catch (error) {
         res.status(error.statusCode || 500).json(error.message);
     }

@@ -18,12 +18,15 @@ const getAllInstructors = async (query) => {
 				},
 			],
 		})
-			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+			
+	}
+	const totalResults = await User.countDocuments(instructorQuery);
+
+	instructorQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
 			.skip(parseInt(query._start))
 			.limit(10)
-	}
 	const instructors = await instructorQuery.exec();
-  return instructors;
+  return {result: instructors, totalResults};
 };
   
 const getInstructorById = async (id) => {

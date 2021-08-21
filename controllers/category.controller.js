@@ -24,10 +24,10 @@ module.exports = {
   createCategory,
 
   getAllCategory: async function (req, res) {
-    const categories = await categoryService.getAll(req.query);
+    const {result, totalResults} = await categoryService.getAll(req.query);
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-    res.header('X-Total-Count', categories.length);
-    return res.status(200).json(categories);
+    res.header('X-Total-Count', totalResults);
+    return res.status(200).json(result);
   },
   
   getCategoryById: async function (req, res) {

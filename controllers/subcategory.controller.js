@@ -99,11 +99,11 @@ module.exports = {
     if (categoryId !== '') filter.category = categoryId;
     if (sortBy !== '') options.sort = {sortBy: 1};
     
-    const subCategories = await subcategoryService.getAll(req.query);
+    const {result, totalResults} = await subcategoryService.getAll(req.query);
 
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-    res.header('X-Total-Count', subCategories.length);
-    return res.status(200).json(subCategories);
+    res.header('X-Total-Count', totalResults);
+    return res.status(200).json(result);
   }
 
 }

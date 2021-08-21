@@ -4,10 +4,11 @@ const { userService, otpService, nodemailerService, courseService, adminService,
 const { isEmailTaken} = require('../services/user.service');
 const getAllUsers = async (req, res) => {
   try {
-    const users = await adminService.getAllUsers(req.query);
+    const {result, totalResults} = await adminService.getAllUsers(req.query);
+
     res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-    res.header('X-Total-Count', users.length);
-    res.status(200).json(users);
+    res.header('X-Total-Count', totalResults);
+    return res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error.message);
   }

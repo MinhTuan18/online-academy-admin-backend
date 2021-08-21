@@ -218,8 +218,7 @@ const queryMostRegisteredSubCategoryLast7Days = async () => {
 }
 
 const getAll = async (query) => {
-    let categoryQuery = SubCategory.find();
-
+    const categoryQuery = SubCategory.find();
 	if (query) {
 		if (!query.q) {
 			query.q = '.';
@@ -229,15 +228,19 @@ const getAll = async (query) => {
                 name: { $regex: query.q, $options: 'i' },
             },
             
-        ],
-    })
-			.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
-			.skip(parseInt(query._start))
-			.limit(10)
+            ],
+        })
+			
 	}
+    const totalResults = await SubCategory.countDocuments(categoryQuery);
+
+    categoryQuery.sort([[`${query._sort}`, query._order === 'ASC' ? 1 : -1]])
+    .skip(parseInt(query._start))
+    .limit(10);
 	const cats = await categoryQuery.exec();
 
-    return cats;
+    return {result: cats, totalResults};
+
 }
 
 module.exports = {
